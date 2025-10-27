@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: pppppproxy
+    name: browser
     env: node
     plan: free
     buildCommand: "yarn install"
