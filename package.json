@@ -1,5 +1,5 @@
 {
-  "name": "ppppp-proxy-ai",
+  "name": "Browser",
   "version": "1.0.0",
   "type": "module",
   "main": "backend/server.js",
