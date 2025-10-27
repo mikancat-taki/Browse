@@ -1,5 +1,5 @@
 {
-  "name": "ppppp-proxy",
+  "name": "ppppp-proxy-ai",
   "version": "1.0.0",
   "type": "module",
   "main": "backend/server.js",
