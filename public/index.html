@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PPPPP Proxy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #001f3f, #0074D9);
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 2em;
+    }
+    input, button {
+      padding: 0.7em;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      margin: 0.5em;
+    }
+    iframe {
+      width: 90%;
+      height: 80vh;
+      border: 2px solid white;
+      border-radius: 10px;
+      margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌐 PPPPP Proxy</h1>
+  <p>アクセスしたいURLまたは検索語を入力してください</p>
+  <input id="urlInput" placeholder="https://example.com または 検索語" />
+  <button onclick="openSite()">開く</button>
+
+  <iframe id="viewer"></iframe>
+
+  <script>
+    async function openSite() {
+      const input = document.getElementById("urlInput").value.trim();
+      const iframe = document.getElementById("viewer");
+
+      if (!input) return alert("URL または 検索語を入力してください。");
+
+      if (input.startsWith("http")) {
+        iframe.src = `/proxy?url=${encodeURIComponent(input)}`;
+      } else {
+        iframe.src = `/search?q=${encodeURIComponent(input)}`;
+      }
+    }
+  </script>
+</body>
+</html>
