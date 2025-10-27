@@ -1,55 +1,137 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PPPPP Proxy</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PPPPP Proxy + AI</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom right, #001f3f, #0074D9);
-      color: white;
-      text-align: center;
+    html, body {
       margin: 0;
-      padding: 2em;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 20% 20%, #00111a, #000010);
+      color: #fff;
+      font-family: "Segoe UI", sans-serif;
     }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .ui {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 1em;
+    }
+
     input, button {
-      padding: 0.7em;
-      font-size: 1em;
-      border: none;
+      padding: 0.6em;
+      margin: 0.4em;
       border-radius: 8px;
-      margin: 0.5em;
+      border: none;
     }
+
     iframe {
       width: 90%;
-      height: 80vh;
+      height: 60vh;
       border: 2px solid white;
       border-radius: 10px;
       margin-top: 1em;
+      background: #000;
     }
+
+    #chat {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1em;
+      border-radius: 10px;
+      width: 80%;
+      margin: 1em auto;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      margin: 0.4em 0;
+    }
+    .user { color: #00ffff; }
+    .ai { color: #ff99ff; }
   </style>
 </head>
 <body>
-  <h1>🌐 PPPPP Proxy</h1>
-  <p>アクセスしたいURLまたは検索語を入力してください</p>
-  <input id="urlInput" placeholder="https://example.com または 検索語" />
-  <button onclick="openSite()">開く</button>
+  <canvas id="bg"></canvas>
 
-  <iframe id="viewer"></iframe>
+  <div class="ui">
+    <h1>🌌 PPPPP Proxy + AI</h1>
+    <input id="urlInput" placeholder="https://example.com または 検索語" />
+    <button onclick="openSite()">🌐 開く</button>
+    <iframe id="viewer"></iframe>
+
+    <h2>🧠 ローカルAIチャット</h2>
+    <div id="chat"></div>
+    <input id="aiInput" placeholder="AIに話しかけよう..." />
+    <button onclick="sendAI()">送信</button>
+  </div>
 
   <script>
     async function openSite() {
       const input = document.getElementById("urlInput").value.trim();
       const iframe = document.getElementById("viewer");
 
-      if (!input) return alert("URL または 検索語を入力してください。");
-
-      if (input.startsWith("http")) {
-        iframe.src = `/proxy?url=${encodeURIComponent(input)}`;
-      } else {
-        iframe.src = `/search?q=${encodeURIComponent(input)}`;
-      }
+      if (!input) return alert("入力してください。");
+      iframe.src = input.startsWith("http")
+        ? `/proxy?url=${encodeURIComponent(input)}`
+        : `/search?q=${encodeURIComponent(input)}`;
     }
+
+    async function sendAI() {
+      const input = document.getElementById("aiInput").value;
+      const chat = document.getElementById("chat");
+      chat.innerHTML += `<div class="msg user">👤 ${input}</div>`;
+      document.getElementById("aiInput").value = "";
+
+      const res = await fetch("/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+      const data = await res.json();
+      chat.innerHTML += `<div class="msg ai">🤖 ${data.reply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // === 背景アニメーション（波＋宇宙） ===
+    const canvas = document.getElementById("bg");
+    const ctx = canvas.getContext("2d");
+    let w, h, t = 0;
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.onresize = resize;
+    resize();
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 20, 0.3)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.beginPath();
+      for (let x = 0; x < w; x += 10) {
+        const y = Math.sin(x * 0.01 + t) * 20 + Math.cos(x * 0.02 + t * 0.7) * 10 + h / 2;
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "rgba(0,150,255,0.5)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      t += 0.03;
+      requestAnimationFrame(draw);
+    }
+    draw();
   </script>
 </body>
 </html>
